@@ -1,65 +1,148 @@
-import Image from "next/image";
+"use client";
+
+import dynamic from "next/dynamic";
+import { useQuotationStore } from "@/store/useQuotationStore";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Plus, Download, Save, Share2, Loader2, FilePlus } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
+import { saveQuotation } from "@/app/actions/quotation";
+import { useState, useEffect } from "react";
+import { toast, Toaster } from "sonner";
+import { useRouter } from "next/navigation";
+
+const Editor = dynamic(() => import("@/components/editor/Editor"), {
+  ssr: false,
+});
 
 export default function Home() {
+  const router = useRouter();
+  const { id, blocks, title, totalAmount, setTitle, setId, setBlocks, reset } = useQuotationStore();
+  const [isSaving, setIsSaving] = useState(false);
+
+  // New quotation logic on first load or manual reset
+  useEffect(() => {
+    if (!id) {
+      reset();
+    }
+  }, [id, reset]);
+
+  const handleSave = async () => {
+    if (!title.trim()) {
+      toast.error("Please enter a title for the quotation.");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const result = await saveQuotation(id, { title, blocks });
+      if (result && result.id) {
+        const isNew = !id;
+        setId(result.id);
+        toast.success("Quotation saved successfully!");
+        
+        if (isNew) {
+          router.push(`/quotation/${result.id}`);
+        }
+      } else {
+        toast.error("An error occurred while saving.");
+      }
+    } catch (e: any) {
+      toast.error(e.message || "Failed to save.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleNew = () => {
+    reset();
+    router.push("/");
+    toast.info("Started a new quotation.");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-[#f2f4f6]">
+      <Toaster position="top-center" richColors />
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="text-primary font-bold text-2xl tracking-tighter cursor-pointer" onClick={() => router.push("/")}>
+            Quotes
+          </div>
+          <div className="w-[1px] h-6 bg-slate-200 mx-2" />
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="border-none bg-transparent font-semibold text-lg focus-visible:ring-0 shadow-none w-[300px]"
+            placeholder="Enter quotation title"
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Estimated Total</span>
+            <span className="text-xl font-extrabold text-primary">
+              {formatCurrency(totalAmount)}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" className="rounded-xl text-slate-600" onClick={handleNew}>
+              <FilePlus className="w-4 h-4 mr-2" /> 신규
+            </Button>
+            <Button variant="ghost" className="rounded-xl text-slate-600">
+              <Share2 className="w-4 h-4 mr-2" /> 공유
+            </Button>
+            <Button variant="outline" className="rounded-xl border-slate-200">
+              <Download className="w-4 h-4 mr-2" /> PDF 저장
+            </Button>
+            <Button 
+              className="rounded-xl bg-primary hover:bg-primary/90 text-white shadow-md min-w-[120px]"
+              onClick={handleSave}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              {id ? "수정사항 저장" : "견적서 발행"}
+            </Button>
+          </div>
         </div>
-      </main>
-    </div>
+      </header>
+
+      <div className="max-w-[1200px] mx-auto py-10 px-6 flex gap-8">
+        <aside className="w-[300px] space-y-6 shrink-0">
+          <div className="bg-white rounded-[24px] p-6 border border-slate-100 shadow-sm">
+            <h3 className="font-bold text-slate-900 mb-4 flex items-center">
+              <Plus className="w-4 h-4 mr-2 text-primary" /> 블록 추가
+            </h3>
+            <div className="grid grid-cols-1 gap-2">
+              {[
+                { name: "텍스트 블록", type: "paragraph" }, 
+                { name: "가격 수량표", type: "pricingTable" }
+              ].map((item) => (
+                <button
+                  key={item.name}
+                  className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 text-sm font-medium text-slate-600 transition-all active:scale-[0.98]"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent("insert-block", { detail: item.type }));
+                  }}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        <section id="editor-canvas" className="flex-1 min-w-0">
+          <Editor
+            onChange={setBlocks}
+            initialContent={id ? blocks : undefined}
+          />
+        </section>
+      </div>
+    </main>
   );
 }

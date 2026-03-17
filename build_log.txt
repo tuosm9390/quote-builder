@@ -1,0 +1,36 @@
+??Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+Error: Cannot apply unknown utility class `shadow-[0_4px_24px_rgba(0,`
+    [at onInvalidCandidate (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:21:1511)]
+    [at Ee (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:16:36740)]
+    [at C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:21:355]
+    [at Pr (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:3:1733)]
+    [at _ (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:3:1377)]
+    [at Te (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:21:172)]
+    [at pn (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:38:294)]
+    [at async dn (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\tailwindcss@4.2.1\node_modules\tailwindcss\dist\lib.js:38:631)]
+    [at async Xr (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\@tailwindcss+node@4.2.1\node_modules\@tailwindcss\node\dist\index.js:10:3417)]
+    [at async N (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\@tailwindcss+postcss@4.2.1\node_modules\@tailwindcss\postcss\dist\index.js:10:3979)]
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\src\app\globals.css:1:1: Cannot apply unknown utility class `shadow-[0_4px_24px_rgba(0,`
+    at Input.error (node_modules/.pnpm/postcss@8.4.31/node_modules/postcss/lib/input.js:106:16) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\node_modules__pnpm_56ec7204._.js:4132:22]
+    at Root.error (node_modules/.pnpm/postcss@8.4.31/node_modules/postcss/lib/node.js:115:32) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\node_modules__pnpm_56ec7204._.js:895:38]
+    [at Object.Once (C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\node_modules\.pnpm\@tailwindcss+postcss@4.2.1\node_modules\@tailwindcss\postcss\dist\index.js:10:6913)]
+    at async LazyResult.runAsync (node_modules/.pnpm/postcss@8.4.31/node_modules/postcss/lib/lazy-result.js:261:11) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\node_modules__pnpm_56ec7204._.js:6052:21]
+    at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\[root-of-the-server]__51225daf._.js:146:36]
+    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\[root-of-the-server]__974941ed._.js:443:31]
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client Component Browser]
+    ./src/app/layout.tsx [Server Component]
+
+
+    at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\[root-of-the-server]__51225daf._.js:146:36])
+    at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23) [C:\Users\tuosm\.gemini\antigravity\scratch\quote-builder\.next\build\chunks\[root-of-the-server]__974941ed._.js:443:31])

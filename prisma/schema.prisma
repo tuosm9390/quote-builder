@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Quotation {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  
+  // JSONB column storing the BlockNote blocks
+  // e.g. [{ type: "header", data: ... }, { type: "pricingTable", data: ... }]
+  blocks      Json     @default("[]") 
+  
+  // Total calculated amount for easy querying
+  totalAmount Float    @default(0.0)
+
+  // Status mapping: DRAFT, SENT, ACCEPTED, REJECTED
+  status      String   @default("DRAFT")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
