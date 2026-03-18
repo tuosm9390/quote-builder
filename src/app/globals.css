@@ -55,3 +55,40 @@
 .toss-btn {
   @apply rounded-[12px] px-4 py-2 font-semibold transition-all duration-200 active:scale-[0.98];
 }
+
+/* PDF Export Utilities */
+.pdf-export-mode .pdf-hidden {
+  display: none !important;
+}
+
+.pdf-export-mode .pdf-text-only input {
+  pointer-events: none;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
+.pdf-export-mode .pdf-no-border {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+.pdf-export-mode .toss-card {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border: 1px solid #000 !important;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+  }
+}

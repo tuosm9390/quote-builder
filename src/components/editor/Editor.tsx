@@ -13,6 +13,7 @@ import "@blocknote/mantine/style.css";
 import "@mantine/core/styles.css";
 
 import { PricingTableBlock } from "./PricingTableBlock";
+import { NoticeBlock } from "./NoticeBlock";
 
 interface EditorProps {
   onChange: (blocks: any[]) => void;
@@ -29,7 +30,8 @@ export default function Editor({
     return BlockNoteSchema.create({
       blockSpecs: {
         ...defaultBlockSpecs,
-        pricingTable: PricingTableBlock,
+        pricingTable: PricingTableBlock(),
+        notice: NoticeBlock(),
       },
     });
   }, []);
@@ -40,11 +42,18 @@ export default function Editor({
   });
 
   useEffect(() => {
+    editor.isEditable = editable;
+  }, [editor, editable]);
+
+  useEffect(() => {
     const handleInsert = (e: any) => {
       const type = e.detail;
+      // Find the last block in the document to append after it
+      const lastBlock = editor.document[editor.document.length - 1];
+      
       editor.insertBlocks(
         [{ type: type as any }],
-        editor.getTextCursorPosition().block,
+        lastBlock,
         "after",
       );
     };

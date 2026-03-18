@@ -1,20 +1,56 @@
-﻿export interface PricingTableRow {
+export interface PricingTableRow {
   id: string;
   item: string;
+  spec?: string;
   quantity: number;
   unitPrice: number;
-  [key: string]: string | number;
+  [key: string]: string | number | undefined;
 }
 
 export interface PricingTableColumn {
   id: string;
   label: string;
-  type: \"text\" | \"number\" | \"calculated\";
+  type: "text" | "number" | "calculated" | "percentage";
+  width?: number; // percentage width (0-100)
+  percentageMode?: "ratio" | "discount" | "margin";
+  formula?: {
+    leftColId: string;
+    rightColId: string;
+    operator: "+" | "-" | "*" | "/";
+  };
 }
 
 export interface PricingTableProps {
   columns: PricingTableColumn[];
   rows: PricingTableRow[];
+  vatIncluded: boolean;
+  totalColId?: string;
+  vendorName?: string;
+}
+
+export interface QuotationHeader {
+  logo?: string;
+  title: string;
+  quotationNumber: string;
+  date: string;
+  validUntil: string;
+  from: {
+    name: string;
+    address: string;
+    contact: string;
+    email: string;
+    registrationNumber: string;
+  };
+  to: {
+    name: string;
+    contact: string;
+    email: string;
+  };
+}
+
+export interface QuotationFooter {
+  notes: string;
+  terms: string;
 }
 
 export interface Block {
@@ -26,6 +62,6 @@ export interface Block {
 }
 
 export interface PricingTableBlock extends Block {
-  type: \"pricingTable\";
+  type: "pricingTable";
   props: PricingTableProps;
 }

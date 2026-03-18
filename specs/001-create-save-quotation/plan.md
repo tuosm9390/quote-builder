@@ -1,100 +1,50 @@
+Date: 2026-03-18 15:40:00
+Author: Antigravity
+
 # Implementation Plan: 견적서 생성 및 저장 기능 (Create and save quotation)
 
-**Branch**: `001-create-save-quotation` | **Date**: 2026-03-17 | **Spec**: [specs/001-create-save-quotation/spec.md](../../specs/001-create-save-quotation/spec.md)
+## 1. 개요
+견적서의 제목, 블록 데이터, 총액 및 상태를 관리하고 영구 저장하기 위한 기술적 설계를 정의함. (구현 완료 단계)
 
-## Summary
+## 2. 데이터베이스 설계 (Prisma) - [완료]
+`Quotation` 모델 확장을 통해 소유권, 상태, 버전 관리를 지원함.
 
-이 기능은 사용자가 `BlockNote` 에디터에서 작성한 견적서(텍스트 및 가격표 블록)를 `Prisma`와 `PostgreSQL`을 사용하여 영구 저장하는 기능을 구현합니다. `Zustand` 스토어와 연동하여 실시간 편집 상태를 유지하고, `Next.js Server Actions`를 통해 안전하게 DB에 반영하며 서버 측에서 금액 재검증 로직을 수행합니다.
-
-## Technical Context
-
-**Language/Version**: TypeScript 5.x, React 19, Next.js 16.1.6
-**Primary Dependencies**: @blocknote/core, zustand, prisma, zod
-**Storage**: PostgreSQL (Prisma ORM)
-**Testing**: Jest, React Testing Library (TDD)
-**Target Platform**: Web (Next.js App Router)
-**Project Type**: Web Application
-**Performance Goals**: 저장 및 로드 시간 < 500ms, 가격표 실시간 계산 < 200ms
-**Constraints**: No `any` types, Server-side total amount re-validation, JSONB storage for blocks
-
-## Constitution Check
-
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
-
-- [x] CP1: Block-Based Content Architecture 준수 여부 (BlockNote 기반 설계)
-- [x] CP2: Zustand를 통한 전역 상태 관리 적절성 (useQuotationStore 활용)
-- [x] CP3: Prisma + PostgreSQL JSONB 타입 안전성 (Zod 스키마 검증 계획 포함)
-- [x] CP4: TDD (Red-Green-Refactor) 계획 포함 여부 (테스트 태스크 포함)
-- [x] CP5: Next.js App Router (Server/Client 분리) 최적화 (Server Actions 사용)
-
-## Project Structure
-
-### Documentation (this feature)
-
-```text
-specs/001-create-save-quotation/
-├── plan.md              # This file
-├── research.md          # DB Schema & Server Action research
-├── data-model.md        # Prisma Schema & Zod Validations
-├── quickstart.md        # Local setup with DB
-├── checklists/
-│   └── requirements.md  # Spec validation results
-└── tasks.md             # Implementation tasks
+```prisma
+model Quotation {
+  id          String    @id @default(uuid())
+  title       String
+  blocks      Json      @default("[]") 
+  totalAmount Int       @default(0)    // FR-003: 정수형 처리
+  status      String    @default("DRAFT")
+  version     Int       @default(1)    // FR-009: 낙관적 잠금 (진행 중)
+  ownerId     String?                 // FR-007: 소유자 기반 권한
+  deletedAt   DateTime?               // FR-008: Soft Delete
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
 ```
 
-### Source Code (repository root)
+## 3. API 및 서버 액션 (Next.js Server Actions) - [완료/고도화 중]
+- `saveQuotation`: 견적서 생성/업데이트 및 서버 측 총액 검증 (`calculations.ts` 활용).
+- `updateStatus`: 수동 상태 전이 (`DRAFT` -> `SENT` -> `ACCEPTED`). [완료]
+- `softDeleteQuotation`: `deletedAt` 필드 업데이트를 통한 삭제 처리. [완료]
+- **TBD**: `version` 필드를 활용한 낙관적 잠금 충돌 처리 로직 추가.
 
-```text
-src/
-├── app/
-│   ├── actions/
-│   │   └── quotation.ts      # Server Actions for CRUD
-│   └── quotation/
-│       └── [id]/
-│           └── page.tsx      # Edit page
-├── components/
-│   ├── editor/
-│   │   ├── Editor.tsx        # Updated with onChange
-│   │   └── PricingTableBlock.tsx
-│   └── ui/
-│       └── SaveButton.tsx    # New Component
-├── lib/
-│   ├── prisma.ts             # Prisma Client singleton
-│   └── validations/
-│       └── quotation.ts      # Zod schemas
-└── store/
-    └── useQuotationStore.ts  # Updated store
-```
+## 4. 프론트엔드 구현 전략 (React & BlockNote) - [완료]
+- **상태 관리**: `useQuotationStore` (Zustand)를 통한 상태 전역 관리 및 `isEditable` 헬퍼 구현.
+- **가격표 블록 (PricingTableBlock)**:
+  - 부가세 토글 버튼 및 상세 내역(공급가액, VAT) 표시.
+  - 정수 기반 계산 로직 적용.
+- **에디터 락(Lock)**: `status`가 `SENT` 이상일 때 에디터 및 사이드바 편집 권한 차단.
 
-**Structure Decision**: Next.js App Router 패턴에 따라 `src/app/actions`에 Server Actions를 배치하여 서버 측 로직을 격리하고, `src/lib/validations`에서 Zod를 통한 통합 검증을 수행합니다.
+## 5. 단계별 실행 계획
+1.  **DB 스키마 업데이트**: [완료]
+2.  **서버 로직 강화**: [완료] (낙관적 잠금 고도화 남음)
+3.  **UI 컴포넌트 고도화**: [완료]
+4.  **상태 관리 로직 구현**: [완료]
+5.  **낙관적 잠금 적용**: [진행 중] 명세 세션에서 추가된 버전 관리 로직 구현.
 
-## Data Model (Mental Model)
-
-### Quotation (Prisma)
-- `id`: String (UUID)
-- `title`: String
-- `blocks`: Json (Array of BlockNote blocks)
-- `totalAmount`: Float
-- `status`: Enum (DRAFT, SENT, etc.)
-- `createdAt`, `updatedAt`: DateTime
-
-### Validation (Zod)
-- `QuotationSchema`: title(min 1), blocks(array), totalAmount(positive number)
-
-## API / Server Actions Contract
-
-### `createQuotation(data: CreateQuotationInput)`
-- **Input**: `{ title: string, blocks: any[] }`
-- **Output**: `{ success: boolean, id?: string, error?: string }`
-- **Logic**: 서버 측에서 blocks 데이터를 파싱하여 totalAmount 재계산 및 검증 후 저장.
-
-### `updateQuotation(id: string, data: UpdateQuotationInput)`
-- **Input**: `{ title?: string, blocks?: any[] }`
-- **Output**: `{ success: boolean, error?: string }`
-- **Logic**: 기존 레코드 업데이트 및 totalAmount 갱신.
-
-## Complexity Tracking
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| None | | |
+## 6. 위험 요소 및 대책
+- **데이터 불일치**: `lib/calculations.ts`를 공유하여 클라이언트/서버 계산 일치시킴. [해결]
+- **성능**: 100개 블록 기준 1초 이내 로딩 목표 설정. [모니터링 중]
