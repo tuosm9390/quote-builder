@@ -7,12 +7,27 @@ export interface PricingTableRow {
   [key: string]: string | number | undefined;
 }
 
+export type QuotationStatus = "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED";
+
+export interface Quotation {
+  id: string;
+  title: string;
+  description?: string | null;
+  blocks: any;
+  totalAmount: number;
+  status: QuotationStatus | string;
+  ownerId?: string | null;
+  deletedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface PricingTableColumn {
   id: string;
   label: string;
   type: "text" | "number" | "calculated" | "percentage";
   width?: number; // percentage width (0-100)
-  percentageMode?: "ratio" | "discount" | "margin";
+  percentageMode?: "ratio" | "discount" | "margin" | "markup";
   formula?: {
     leftColId: string;
     rightColId: string;

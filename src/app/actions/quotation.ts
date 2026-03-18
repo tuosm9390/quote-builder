@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { quotationSchema } from "@/lib/validations/quotation";
 import { validateQuotationTotal } from "@/lib/calculations";
 import { revalidatePath } from "next/cache";
+import { Quotation } from "@/types/quotation";
 
 export async function saveQuotation(
   id: string | null,
   data: { title: string; blocks: any[] }
-) {
+): Promise<Quotation> {
   // Recalculate totalAmount on server-side using the shared calculation engine (FR-004)
   const serverTotal = validateQuotationTotal(data.blocks);
 
@@ -34,7 +35,7 @@ export async function saveQuotation(
     });
     revalidatePath(`/quotation/${id}`);
     revalidatePath("/");
-    return updated;
+    return updated as unknown as Quotation;
   } else {
     const created = await prisma.quotation.create({
       data: {
@@ -45,7 +46,7 @@ export async function saveQuotation(
       },
     });
     revalidatePath("/");
-    return created;
+    return created as unknown as Quotation;
   }
 }
 
@@ -53,7 +54,7 @@ export async function saveQuotation(
  * Fetches all quotations that are not soft-deleted (FR-008).
  * Ordered by createdAt descending.
  */
-export async function getQuotations() {
+export async function getQuotations(): Promise<Quotation[]> {
   try {
     const quotations = await prisma.quotation.findMany({
       where: {
@@ -63,7 +64,7 @@ export async function getQuotations() {
         createdAt: "desc",
       },
     });
-    return quotations;
+    return quotations as unknown as Quotation[];
   } catch (error) {
     console.error("Failed to fetch quotations:", error);
     throw new Error("Failed to fetch quotations.");
@@ -73,24 +74,27 @@ export async function getQuotations() {
 /**
  * Manually updates the status of a quotation (FR-006).
  */
-export async function updateStatus(id: string, status: string) {
+export async function updateStatus(
+  id: string,
+  status: string
+): Promise<Quotation> {
   const updated = await prisma.quotation.update({
     where: { id },
     data: { status },
   });
   revalidatePath(`/quotation/${id}`);
   revalidatePath("/");
-  return updated;
+  return updated as unknown as Quotation;
 }
 
 /**
  * Performs a Soft Delete by setting deletedAt (FR-008).
  */
-export async function softDeleteQuotation(id: string) {
+export async function softDeleteQuotation(id: string): Promise<Quotation> {
   const updated = await prisma.quotation.update({
     where: { id },
     data: { deletedAt: new Date() },
   });
   revalidatePath("/");
-  return updated;
+  return updated as unknown as Quotation;
 }
