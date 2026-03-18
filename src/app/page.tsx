@@ -3,15 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Plus, FileText, Clock, Send, CheckCircle, ChevronRight, LayoutDashboard, Search } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
+import { Quotation } from "@prisma/client";
 
 export default async function DashboardPage() {
   const quotations = await getQuotations();
 
   const stats = {
     total: quotations.length,
-    draft: quotations.filter(q => q.status === "DRAFT").length,
-    sent: quotations.filter(q => q.status === "SENT").length,
-    accepted: quotations.filter(q => q.status === "ACCEPTED").length,
+    draft: quotations.filter((q: Quotation) => q.status === "DRAFT").length,
+    sent: quotations.filter((q: Quotation) => q.status === "SENT").length,
+    accepted: quotations.filter((q: Quotation) => q.status === "ACCEPTED").length,
   };
 
   const formatDate = (date: Date) => {

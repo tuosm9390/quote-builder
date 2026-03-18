@@ -24,7 +24,6 @@ export const getCellValue = (
     const rightCol = columns.find(c => c.id === col.formula?.rightColId);
     
     const transformValue = (val: number, c?: PricingTableColumn) => {
-      // @ts-ignore - formula operator is guaranteed if type is calculated
       if (c?.type === "percentage" && col.formula?.operator === "*") {
         const mode = c.percentageMode || "ratio";
         const r = val / 100;

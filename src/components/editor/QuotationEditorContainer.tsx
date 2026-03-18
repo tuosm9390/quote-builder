@@ -25,7 +25,6 @@ export default function QuotationEditorContainer() {
   // Initialize blocks for new quotation if empty
   useEffect(() => {
     if (!id && blocks.length === 0) {
-      // @ts-ignore
       useQuotationStore.getState().syncToBlocks();
     }
   }, [id, blocks.length]);

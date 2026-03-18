@@ -4,11 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { quotationSchema } from "@/lib/validations/quotation";
 import { validateQuotationTotal } from "@/lib/calculations";
 import { revalidatePath } from "next/cache";
+import { Quotation } from "@prisma/client";
+import { Block } from "@/types/quotation";
 
 export async function saveQuotation(
   id: string | null,
-  data: { title: string; blocks: any[] }
-) {
+  data: { title: string; blocks: Block[] }
+): Promise<Quotation> {
   // Recalculate totalAmount on server-side using the shared calculation engine (FR-004)
   const serverTotal = validateQuotationTotal(data.blocks);
 
@@ -28,7 +30,7 @@ export async function saveQuotation(
       where: { id },
       data: {
         title: validated.title,
-        blocks: validated.blocks as any,
+        blocks: validated.blocks as any, // Cast to any for Prisma Json compatibility
         totalAmount: validated.totalAmount,
       },
     });
@@ -39,7 +41,7 @@ export async function saveQuotation(
     const created = await prisma.quotation.create({
       data: {
         title: validated.title,
-        blocks: validated.blocks as any,
+        blocks: validated.blocks as any, // Cast to any for Prisma Json compatibility
         totalAmount: validated.totalAmount,
         status: "DRAFT",
       },
@@ -53,7 +55,7 @@ export async function saveQuotation(
  * Fetches all quotations that are not soft-deleted (FR-008).
  * Ordered by createdAt descending.
  */
-export async function getQuotations() {
+export async function getQuotations(): Promise<Quotation[]> {
   try {
     const quotations = await prisma.quotation.findMany({
       where: {
@@ -73,7 +75,7 @@ export async function getQuotations() {
 /**
  * Manually updates the status of a quotation (FR-006).
  */
-export async function updateStatus(id: string, status: string) {
+export async function updateStatus(id: string, status: string): Promise<Quotation> {
   const updated = await prisma.quotation.update({
     where: { id },
     data: { status },
@@ -86,7 +88,7 @@ export async function updateStatus(id: string, status: string) {
 /**
  * Performs a Soft Delete by setting deletedAt (FR-008).
  */
-export async function softDeleteQuotation(id: string) {
+export async function softDeleteQuotation(id: string): Promise<Quotation> {
   const updated = await prisma.quotation.update({
     where: { id },
     data: { deletedAt: new Date() },

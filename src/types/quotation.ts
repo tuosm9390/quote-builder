@@ -57,8 +57,8 @@ export interface Block {
   id: string;
   type: string;
   props: Record<string, any>;
-  content: any[];
-  children: Block[];
+  content?: any[];
+  children?: Block[];
 }
 
 export interface PricingTableBlock extends Block {

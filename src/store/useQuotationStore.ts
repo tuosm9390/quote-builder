@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { validateQuotationTotal } from "@/lib/calculations";
-import { PricingTableProps, QuotationHeader, QuotationFooter } from "@/types/quotation";
+import { PricingTableProps, QuotationHeader, QuotationFooter, Block } from "@/types/quotation";
 
 interface QuotationState {
   id: string | null;
   title: string;
-  blocks: any[]; // Keeps backward compatibility with DB
+  blocks: Block[]; // Keeps backward compatibility with DB
   totalAmount: number;
   status: string; // DRAFT, SENT, ACCEPTED, REJECTED
   
@@ -16,7 +16,7 @@ interface QuotationState {
 
   setId: (id: string | null) => void;
   setTitle: (title: string) => void;
-  setBlocks: (blocks: any[]) => void;
+  setBlocks: (blocks: Block[]) => void;
   setStatus: (status: string) => void;
   
   // A4 specific setters
@@ -24,6 +24,7 @@ interface QuotationState {
   setTable: (table: PricingTableProps) => void;
   setFooter: (footer: QuotationFooter) => void;
   
+  syncToBlocks: () => void;
   calculateTotal: () => void;
   reset: () => void;
   isEditable: () => boolean;
@@ -101,28 +102,25 @@ export const useQuotationStore = create<QuotationState>((set, get) => ({
 
     set({ 
       blocks,
-      header: headerBlock ? headerBlock.props : DEFAULT_HEADER,
-      table: tableBlock ? tableBlock.props : DEFAULT_TABLE,
-      footer: footerBlock ? footerBlock.props : DEFAULT_FOOTER,
+      header: headerBlock ? (headerBlock.props as unknown as QuotationHeader) : DEFAULT_HEADER,
+      table: tableBlock ? (tableBlock.props as unknown as PricingTableProps) : DEFAULT_TABLE,
+      footer: footerBlock ? (footerBlock.props as unknown as QuotationFooter) : DEFAULT_FOOTER,
     });
     get().calculateTotal();
   },
 
   setHeader: (header) => {
     set({ header });
-    // @ts-ignore
     get().syncToBlocks();
   },
   
   setTable: (table) => {
     set({ table });
-    // @ts-ignore
     get().syncToBlocks();
   },
   
   setFooter: (footer) => {
     set({ footer });
-    // @ts-ignore
     get().syncToBlocks();
   },
 
