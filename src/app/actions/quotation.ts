@@ -58,9 +58,7 @@ export async function saveQuotation(
 export async function getQuotations(): Promise<Quotation[]> {
   try {
     const quotations = await prisma.quotation.findMany({
-      where: {
-        deletedAt: null,
-      },
+      where: { deletedAt: null } as any,
       orderBy: {
         createdAt: "desc",
       },
@@ -91,7 +89,7 @@ export async function updateStatus(id: string, status: string): Promise<Quotatio
 export async function softDeleteQuotation(id: string): Promise<Quotation> {
   const updated = await prisma.quotation.update({
     where: { id },
-    data: { deletedAt: new Date() },
+    data: { deletedAt: new Date() } as any,
   });
   revalidatePath("/");
   return updated;
