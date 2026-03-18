@@ -28,8 +28,8 @@ export const getCellValue = (
       if (c?.type === "percentage" && col.formula?.operator === "*") {
         const mode = c.percentageMode || "ratio";
         const r = val / 100;
-        if (mode === "discount") return (1 - r);
-        if (mode === "margin" || mode === "markup") return (1 + r);
+        if (mode === ("discount" as string)) return (1 - r);
+        if (mode === ("margin" as string) || mode === ("markup" as string)) return (1 + r);
         return r;
       }
       return val;
