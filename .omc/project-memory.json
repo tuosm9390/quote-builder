@@ -1,0 +1,217 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773844422371,
+  "projectRoot": "D:\\development\\quote-builder",
+  "techStack": {
+    "languages": [
+      {
+        "name": "JavaScript/TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "package.json"
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "tsconfig.json"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "next",
+        "version": "16.1.6",
+        "category": "fullstack"
+      },
+      {
+        "name": "react",
+        "version": "19.2.3",
+        "category": "frontend"
+      },
+      {
+        "name": "react-dom",
+        "version": "19.2.3",
+        "category": "frontend"
+      }
+    ],
+    "packageManager": "pnpm",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": "pnpm build",
+    "testCommand": null,
+    "lintCommand": "pnpm lint",
+    "devCommand": "pnpm dev",
+    "scripts": {
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "eslint"
+    }
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": "type-based"
+  },
+  "structure": {
+    "isMonorepo": true,
+    "workspaces": [],
+    "mainDirectories": [
+      "public",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "002-export-pdf-quotation",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "cli": {
+      "path": "cli",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773844422326,
+      "keyFiles": []
+    },
+    "doc": {
+      "path": "doc",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1773844422327,
+      "keyFiles": [
+        "COMMON_MISTAKES.md",
+        "LESSONS_LEARNED.md"
+      ]
+    },
+    "generated": {
+      "path": "generated",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773844422328,
+      "keyFiles": []
+    },
+    "prisma": {
+      "path": "prisma",
+      "purpose": null,
+      "fileCount": 1,
+      "lastAccessed": 1773844422342,
+      "keyFiles": [
+        "schema.prisma"
+      ]
+    },
+    "public": {
+      "path": "public",
+      "purpose": "Public files",
+      "fileCount": 10,
+      "lastAccessed": 1773844422343,
+      "keyFiles": [
+        "Black and White Simple Order Form A4 Document.jpg",
+        "file.svg",
+        "globe.svg",
+        "next.svg",
+        "vercel.svg"
+      ]
+    },
+    "specs": {
+      "path": "specs",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773844422343,
+      "keyFiles": []
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 0,
+      "lastAccessed": 1773844422344,
+      "keyFiles": []
+    },
+    "prisma\\migrations": {
+      "path": "prisma\\migrations",
+      "purpose": "Database migrations",
+      "fileCount": 1,
+      "lastAccessed": 1773844422345,
+      "keyFiles": [
+        "migration_lock.toml"
+      ]
+    },
+    "src\\app": {
+      "path": "src\\app",
+      "purpose": "Application code",
+      "fileCount": 4,
+      "lastAccessed": 1773844422346,
+      "keyFiles": [
+        "favicon.ico",
+        "globals.css",
+        "layout.tsx"
+      ]
+    },
+    "src\\components": {
+      "path": "src\\components",
+      "purpose": "UI components",
+      "fileCount": 0,
+      "lastAccessed": 1773844422347,
+      "keyFiles": []
+    },
+    "src\\lib": {
+      "path": "src\\lib",
+      "purpose": "Library code",
+      "fileCount": 4,
+      "lastAccessed": 1773844422347,
+      "keyFiles": [
+        "calculations.ts",
+        "export-pdf.ts",
+        "prisma.ts"
+      ]
+    },
+    "src\\types": {
+      "path": "src\\types",
+      "purpose": "Type definitions",
+      "fileCount": 1,
+      "lastAccessed": 1773844422348,
+      "keyFiles": [
+        "quotation.ts"
+      ]
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "",
+      "accessCount": 4,
+      "lastAccessed": 1773844458988,
+      "type": "directory"
+    },
+    {
+      "path": "src\\app\\actions\\quotation.ts",
+      "accessCount": 2,
+      "lastAccessed": 1773844500059,
+      "type": "file"
+    },
+    {
+      "path": "prisma\\schema.prisma",
+      "accessCount": 2,
+      "lastAccessed": 1773844500098,
+      "type": "file"
+    },
+    {
+      "path": "src\\types\\quotation.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773844461476,
+      "type": "file"
+    },
+    {
+      "path": "src\\lib\\calculations.ts",
+      "accessCount": 1,
+      "lastAccessed": 1773844461554,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}
